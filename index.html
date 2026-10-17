@@ -13,7 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <title>Hourly Sets</title>
 <style>
-:root{--bg:#111214;--card:#1c1d21;--line:#2a2b31;--txt:#f2f2f4;--dim:#8b8d96;--g:#34c759;--y:#ffcc00;--r:#ff453a;--gray:#3a3b41}
+:root{--bg:#111214;--card:#1c1d21;--line:#2a2b31;--txt:#f2f2f4;--dim:#8b8d96;--g:#34c759;--y:#ffcc00;--r:#ff453a;--gray:#3a3b41;--p:#0a84ff;--s:#ff9f0a}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
 .wrap{max-width:460px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px)}
@@ -21,18 +21,18 @@ header{display:flex;justify-content:space-between;align-items:baseline;margin-bo
 h1{font-size:22px;margin:0;font-weight:700;letter-spacing:-.3px}
 .date{color:var(--dim);font-size:14px}
 .card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px}
-.top{display:flex;align-items:center;gap:16px}
-.ring{position:relative;width:132px;height:132px;flex:none}
+.rings{display:flex;gap:10px}
+.rg{flex:1;display:flex;flex-direction:column;align-items:center}
+.ring{position:relative;width:118px;height:118px;flex:none}
 .ring svg{transform:rotate(-90deg)}
 .ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.ring .n{font-size:38px;font-weight:700;line-height:1}
-.ring .d{font-size:13px;color:var(--dim);margin-top:2px}
-.stats{flex:1;display:grid;gap:8px}
-.stat{display:flex;justify-content:space-between;font-size:15px}
-.stat b{font-variant-numeric:tabular-nums}
-.stat span{color:var(--dim)}
-.status{font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;justify-self:start}
-.btn{width:100%;border:0;border-radius:16px;padding:20px;font-size:18px;font-weight:700;color:#fff;background:var(--g);margin:2px 0 8px;cursor:pointer}
+.ring .n{font-size:32px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.ring .d{font-size:12px;color:var(--dim);margin-top:2px}
+.rl{font-size:14px;font-weight:600;margin-top:6px}.rl i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:0}
+.status{font-size:13px;font-weight:600;padding:5px 12px;border-radius:999px;display:block;width:max-content;margin:12px auto 0}
+.btns{display:flex;gap:8px}
+.btn{flex:1;border:0;border-radius:16px;padding:20px 8px;font-size:18px;font-weight:700;color:#fff;margin:2px 0 8px;cursor:pointer}
+.btn.p{background:var(--p)}.btn.s{background:var(--s);color:#2a1700}
 .tip{font-size:13px;line-height:1.35;color:var(--dim);text-align:center;margin:0 4px 12px}
 .btn:active{transform:scale(.98);filter:brightness(.9)}
 .row{display:flex;gap:8px}
@@ -40,10 +40,13 @@ h1{font-size:22px;margin:0;font-weight:700;letter-spacing:-.3px}
 .sbtn:disabled{opacity:.35}
 h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim);margin:0 0 10px;font-weight:600}
 .hours{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.h{border-radius:10px;padding:8px 0;text-align:center;font-size:13px;background:var(--gray);color:#cfd0d6}
-.h.done{background:var(--g);color:#06230f;font-weight:700}
+.h{border-radius:10px;padding:7px 0 6px;text-align:center;font-size:13px;background:var(--gray);color:#cfd0d6}
+.h .dots{display:flex;justify-content:center;gap:5px;margin-top:4px}
+.h .dots i{width:9px;height:9px;border-radius:50%;border:1.5px solid #5a5b63}
+.h .dots i.p{background:var(--p);border-color:var(--p)}.h .dots i.s{background:var(--s);border-color:var(--s)}
 .h.now{outline:2px solid #fff;outline-offset:-2px}
-.h.past:not(.done){background:#2a1e1f;color:#a77}
+.h.past{background:#26272c}
+.h.full{background:#1f3326}
 .extra{font-size:12px;color:var(--dim);margin-top:8px}
 .chain{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
 .day{aspect-ratio:1;border-radius:6px;background:var(--gray);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(0,0,0,.55);font-weight:600}
@@ -59,6 +62,10 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim);
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top) + 10px);background:#2c2d33;border:1px solid #444;color:#fff;padding:12px 16px;border-radius:14px;font-size:15px;box-shadow:0 8px 30px rgba(0,0,0,.5);display:none;z-index:9;max-width:92%}
 .note{font-size:12px;color:var(--dim);margin-top:8px}
+.edit{display:none;margin-top:4px;margin-bottom:12px}.edit.on{display:block}
+.edit .row{align-items:center}
+.edit select,.edit input{flex:1;background:#16171a;color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:16px;font-family:inherit}
+.edit .go{flex:none;background:var(--g);color:#06230f;border:0;font-weight:700}
 .toggle{display:flex;justify-content:space-between;align-items:center}
 .toggle button{border:0;border-radius:999px;padding:8px 14px;font-weight:600;cursor:pointer}
 </style>
@@ -68,32 +75,37 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim);
   <header><h1>Hourly Sets</h1><div class="date" id="date"></div></header>
 
   <div class="card">
-    <div class="top">
-      <div class="ring">
-        <svg width="132" height="132" viewBox="0 0 132 132">
-          <circle cx="66" cy="66" r="56" stroke="#2a2b31" stroke-width="12" fill="none"/>
-          <circle id="arc" cx="66" cy="66" r="56" stroke="#34c759" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="351.86" stroke-dashoffset="351.86" />
-        </svg>
-        <div class="c"><div class="n" id="sets">0</div><div class="d">of 10 sets</div></div>
-      </div>
-      <div class="stats">
-        <div class="stat"><span>Incline pushups</span><b id="pu">0 / 50</b></div>
-        <div class="stat"><span>Squats</span><b id="sq">0 / 100</b></div>
-        <div class="stat"><span>Max today</span><b>12 sets</b></div>
-        <div class="status" id="status">Red</div>
-      </div>
+    <div class="rings">
+      <div class="rg"><div class="ring">
+        <svg width="118" height="118" viewBox="0 0 118 118"><circle cx="59" cy="59" r="50" stroke="#2a2b31" stroke-width="11" fill="none"/><circle id="arcP" cx="59" cy="59" r="50" stroke="#0a84ff" stroke-width="11" fill="none" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16"/></svg>
+        <div class="c"><div class="n" id="pu">0</div><div class="d">of 50</div></div></div>
+        <div class="rl"><i style="background:var(--p)"></i>Incline pushups</div></div>
+      <div class="rg"><div class="ring">
+        <svg width="118" height="118" viewBox="0 0 118 118"><circle cx="59" cy="59" r="50" stroke="#2a2b31" stroke-width="11" fill="none"/><circle id="arcS" cx="59" cy="59" r="50" stroke="#ff9f0a" stroke-width="11" fill="none" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16"/></svg>
+        <div class="c"><div class="n" id="sq">0</div><div class="d">of 100</div></div></div>
+        <div class="rl"><i style="background:var(--s)"></i>Squats</div></div>
     </div>
+    <div class="status" id="status">Red</div>
   </div>
 
-  <button class="btn" id="done">Done a set &nbsp;·&nbsp; 5 incline pushups + 10 squats</button>
+  <div class="btns">
+    <button class="btn p" id="addP">+5 incline pushups</button>
+    <button class="btn s" id="addS">+10 squats</button>
+  </div>
   <div class="tip">Incline on a desk or counter, neutral neck. Chair-height squats with something to hold. Stop if chest, shoulder or neck hurts.</div>
   <div class="row" style="margin-bottom:12px">
     <button class="sbtn" id="undo">Undo last</button>
+    <button class="sbtn" id="edit">Add past entry</button>
     <button class="sbtn" id="notif">Enable reminders</button>
   </div>
+  <div class="edit" id="editbox"><div class="row">
+    <select id="eType"><option value="p">+5 incline pushups</option><option value="s">+10 squats</option></select>
+    <input type="time" id="eTime">
+    <button class="sbtn go" id="eAdd">Add</button>
+  </div></div>
 
   <div class="card">
-    <h2>Today · hourly slots 7 AM – 6 PM</h2>
+    <h2>Today · 7 AM – 6 PM <span style="text-transform:none;letter-spacing:0;font-weight:400">· <i style="color:var(--p);font-style:normal">●</i> pushups <i style="color:var(--s);font-style:normal">●</i> squats</span></h2>
     <div class="hours" id="hours"></div>
     <div class="extra" id="extra"></div>
   </div>
@@ -101,7 +113,7 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim);
   <div class="card">
     <h2>Last 30 days</h2>
     <div class="chain" id="chain"></div>
-    <div class="legend"><span><i style="background:var(--g)"></i>10+ sets</span><span><i style="background:var(--y)"></i>5–9</span><span><i style="background:var(--r)"></i>&lt;5</span><span><i style="background:#232429"></i>before start</span></div>
+    <div class="legend"><span><i style="background:var(--g)"></i>both ≥80% (40 + 80)</span><span><i style="background:var(--y)"></i>either ≥40%</span><span><i style="background:var(--r)"></i>less</span><span><i style="background:#232429"></i>before start</span></div>
     <div class="streaks">
       <div><b id="cur">0</b><span>Current streak</span></div>
       <div><b id="best">0</b><span>Best streak</span></div>
@@ -114,72 +126,86 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim);
 <div class="toast" id="toast"></div>
 
 <script>
-const KEY='hourlysets.v1', GOAL=10, START_H=7, END_H=18; // slots 7..18 => 7 AM .. 6 PM (12 slots)
-let db=JSON.parse(localStorage.getItem(KEY)||'{"days":{},"start":null}');
+const OLD='hourlysets.v1', KEY='hourlysets.v2', START_H=7, END_H=18; // 7 AM .. 6 PM slots
+const REPS={p:5,s:10}, GOALS={p:50,s:100};
+let db=JSON.parse(localStorage.getItem(KEY)||'null');
+if(!db){ // migrate v1: each combined set -> one 5-pushup + one 10-squat entry at same time. v1 kept as backup.
+  const o=JSON.parse(localStorage.getItem(OLD)||'{"days":{},"start":null}'); db={days:{},start:o.start||null,migratedFrom:'v1'};
+  for(const k in (o.days||{})) db.days[k]=[].concat(...o.days[k].map(t=>[{t,k:'p'},{t,k:'s'}]));
+  localStorage.setItem(KEY,JSON.stringify(db));
+}
 const save=()=>localStorage.setItem(KEY,JSON.stringify(db));
 const pad=n=>String(n).padStart(2,'0');
 const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const today=()=>dkey(new Date());
 if(!db.start){db.start=today();save();}
-const sets=k=>(db.days[k]||[]).length;
-const color=n=>n>=GOAL?'g':n>=5?'y':'r';
+const tot=(k,type)=>(db.days[k]||[]).filter(e=>e.k===type).length*REPS[type];
+const color=k=>{const p=tot(k,'p'),s=tot(k,'s');
+  if(p>=GOALS.p*.8&&s>=GOALS.s*.8) return 'g';
+  if(p>=GOALS.p*.4||s>=GOALS.s*.4) return 'y'; return 'r';};
 const $=id=>document.getElementById(id);
 
 function toast(msg){const t=$('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',6000);}
 
-$('done').onclick=()=>{const k=today();(db.days[k]=db.days[k]||[]).push(Date.now());save();if(navigator.vibrate)navigator.vibrate(30);
-  const n=sets(k); if(n===GOAL) toast('🟢 10 sets — green day!'); render();};
-$('undo').onclick=()=>{const a=db.days[today()];if(a&&a.length){a.pop();save();render();}};
+function add(type,t){const k=dkey(new Date(t)), was=color(k);(db.days[k]=db.days[k]||[]).push({t,k:type});save();
+  if(navigator.vibrate)navigator.vibrate(30);
+  if(was!=='g'&&color(k)==='g') toast('🟢 Green day — both goals at 80%+!');
+  else if(tot(k,type)===GOALS[type]) toast(type==='p'?'💪 50 incline pushups — goal done!':'🦵 100 squats — goal done!');
+  render();}
+$('addP').onclick=()=>add('p',Date.now());
+$('addS').onclick=()=>add('s',Date.now());
+$('undo').onclick=()=>{const a=db.days[today()];if(a&&a.length){const e=a.pop();save();render();
+  toast('Removed '+(e.k==='p'?'5 incline pushups':'10 squats')+' at '+new Date(e.t).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}));}};
+$('edit').onclick=()=>{const b=$('editbox');b.classList.toggle('on');const n=new Date();$('eTime').value=pad(n.getHours())+':'+pad(n.getMinutes());};
+$('eAdd').onclick=()=>{const v=$('eTime').value;if(!v)return;const [h,m]=v.split(':').map(Number);const d=new Date();d.setHours(h,m,0,0);
+  if(d.getTime()>Date.now()){toast('Pick a time earlier today.');return;}
+  add($('eType').value,d.getTime());$('editbox').classList.remove('on');
+  toast('Added '+($('eType').value==='p'?'5 incline pushups':'10 squats')+' at '+d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}));};
 
 function streaks(){
-  // walk from start to today; today counts only if already green
   const s=new Date(db.start+'T00:00:00'), t=new Date(); t.setHours(0,0,0,0);
-  let best=0,run=0,cur=0;
+  let best=0,run=0;
   for(let d=new Date(s);d<=t;d.setDate(d.getDate()+1)){
-    const k=dkey(d), g=sets(k)>=GOAL;
+    const k=dkey(d), g=color(k)==='g';
     if(g){run++;best=Math.max(best,run);} else if(k!==today()) run=0;
   }
-  cur=run; return {cur,best};
+  return {cur:run,best};
 }
 
 function render(){
-  const k=today(), n=sets(k), now=new Date();
+  const k=today(), now=new Date(), p=tot(k,'p'), s=tot(k,'s');
   $('date').textContent=now.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
-  $('sets').textContent=n;
-  $('pu').textContent=(n*5)+' / 50'; $('sq').textContent=(n*10)+' / 100';
-  const c=color(n), col={g:'#34c759',y:'#ffcc00',r:'#ff453a'}[c];
-  const arc=$('arc'); arc.style.strokeDashoffset=351.86*(1-Math.min(n,GOAL)/GOAL); arc.style.stroke=n?col:'#34c759';
+  $('pu').textContent=p; $('sq').textContent=s;
+  $('arcP').style.strokeDashoffset=314.16*(1-Math.min(p,GOALS.p)/GOALS.p);
+  $('arcS').style.strokeDashoffset=314.16*(1-Math.min(s,GOALS.s)/GOALS.s);
+  const c=color(k), col={g:'#34c759',y:'#ffcc00',r:'#ff453a'}[c];
   const st=$('status'); st.textContent=c==='g'?'Green day':c==='y'?'Yellow so far':'Red so far'; st.style.background=col; st.style.color='#111';
-  $('undo').disabled=!n;
-  // hourly grid: a set logged during hour H fills slot H; extras fill the earliest empty slot
-  const stamps=(db.days[k]||[]).map(x=>new Date(x).getHours());
-  const filled=new Set(); let extra=0;
-  stamps.forEach(h=>{ if(h>=START_H&&h<=END_H&&!filled.has(h)) filled.add(h); else extra++; });
-  let outside=extra;
-  for(let h=START_H;h<=END_H&&extra>0;h++) if(!filled.has(h)){filled.add(h);extra--;}
+  $('undo').disabled=!(db.days[k]||[]).length;
+  const ents=db.days[k]||[], by={}; let outside=0;
+  ents.forEach(e=>{const h=new Date(e.t).getHours(); if(h<START_H||h>END_H){outside++;return;} (by[h]=by[h]||{p:0,s:0})[e.k]++;});
   const ch=now.getHours(), H=$('hours'); H.innerHTML='';
-  for(let h=START_H;h<=END_H;h++){const el=document.createElement('div');
-    el.className='h'+(filled.has(h)?' done':'')+(h===ch?' now':'')+(h<ch?' past':'');
-    el.textContent=(h%12||12)+(h<12?'a':'p'); H.appendChild(el);}
-  $('extra').textContent=outside?`${outside} set${outside>1?'s':''} logged outside the hour slot (doubled up or before 7 AM / after 7 PM) — counted and shown in the first open slot${extra?`; ${extra} beyond 12`:''}.`:'';
-  // chain
+  for(let h=START_H;h<=END_H;h++){const el=document.createElement('div'), b=by[h]||{p:0,s:0};
+    el.className='h'+(b.p&&b.s?' full':'')+(h===ch?' now':'')+(h<ch?' past':'');
+    el.title=`${b.p*5} pushups, ${b.s*10} squats`;
+    el.innerHTML=(h%12||12)+(h<12?'a':'p')+`<div class="dots"><i class="${b.p?'p':''}"></i><i class="${b.s?'s':''}"></i></div>`; H.appendChild(el);}
+  $('extra').textContent=outside?`${outside} entr${outside>1?'ies':'y'} logged before 7 AM or after 7 PM — counted in today's totals.`:'';
   const C=$('chain'); C.innerHTML='';
-  for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const kk=dkey(d), nn=sets(kk);
+  for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const kk=dkey(d), cc=color(kk);
     const el=document.createElement('div');
-    el.className='day '+(kk<db.start?'none':(i===0&&nn<GOAL)?'pend':color(nn))+(i===0?' today':'');
-    el.title=kk+': '+nn+' sets'; el.textContent=d.getDate(); C.appendChild(el);}
-  const s=streaks(); $('cur').textContent=s.cur; $('best').textContent=s.best;
-  let g=0; for(let i=0;i<30;i++){const d=new Date();d.setDate(d.getDate()-i);if(sets(dkey(d))>=GOAL)g++;} $('greens').textContent=g;
+    el.className='day '+(kk<db.start?'none':(i===0&&cc!=='g')?'pend':cc)+(i===0?' today':'');
+    el.title=`${kk}: ${tot(kk,'p')} pushups, ${tot(kk,'s')} squats`; el.textContent=d.getDate(); C.appendChild(el);}
+  const sk=streaks(); $('cur').textContent=sk.cur; $('best').textContent=sk.best;
+  let g=0; for(let i=0;i<30;i++){const d=new Date();d.setDate(d.getDate()-i);if(color(dkey(d))==='g')g++;} $('greens').textContent=g;
   $('notif').textContent=('Notification' in window && Notification.permission==='granted')?'Reminders on ✓':'Enable reminders';
 }
 
 // ---- in-app hourly reminders (only while open) ----
-let lastFired=localStorage.getItem(KEY+'.last')||'';
+let lastFired=localStorage.getItem(OLD+'.last')||'';
 async function remind(){
   const now=new Date(), h=now.getHours(), tag=today()+'-'+h;
   if(h<START_H||h>END_H||now.getMinutes()>5||lastFired===tag) return;
-  lastFired=tag; localStorage.setItem(KEY+'.last',tag);
-  const n=sets(today()), msg=`Time for a set: 5 incline pushups + 10 squats (${n}/10 today)`;
+  lastFired=tag; localStorage.setItem(OLD+'.last',tag);
+  const msg=`Time to move: 5 incline pushups and/or 10 squats (${tot(today(),'p')}/50 pushups, ${tot(today(),'s')}/100 squats today)`;
   toast('⏰ '+msg); if(navigator.vibrate)navigator.vibrate([200,100,200]);
   if('Notification' in window && Notification.permission==='granted'){
     try{const r=await navigator.serviceWorker.ready; r.showNotification('Hourly Sets',{body:msg,tag:'hourly',icon:'icon-192.png'});}
