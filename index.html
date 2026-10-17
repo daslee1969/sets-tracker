@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111214">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hourly Sets">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>Hourly Sets</title>
+<style>
+:root{--bg:#111214;--card:#1c1d21;--line:#2a2b31;--txt:#f2f2f4;--dim:#8b8d96;--g:#34c759;--y:#ffcc00;--r:#ff453a;--gray:#3a3b41}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+.wrap{max-width:460px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 24px)}
+header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+h1{font-size:22px;margin:0;font-weight:700;letter-spacing:-.3px}
+.date{color:var(--dim);font-size:14px}
+.card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px}
+.top{display:flex;align-items:center;gap:16px}
+.ring{position:relative;width:132px;height:132px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .n{font-size:38px;font-weight:700;line-height:1}
+.ring .d{font-size:13px;color:var(--dim);margin-top:2px}
+.stats{flex:1;display:grid;gap:8px}
+.stat{display:flex;justify-content:space-between;font-size:15px}
+.stat b{font-variant-numeric:tabular-nums}
+.stat span{color:var(--dim)}
+.status{font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;justify-self:start}
+.btn{width:100%;border:0;border-radius:16px;padding:20px;font-size:18px;font-weight:700;color:#fff;background:var(--g);margin:2px 0 8px;cursor:pointer}
+.tip{font-size:13px;line-height:1.35;color:var(--dim);text-align:center;margin:0 4px 12px}
+.btn:active{transform:scale(.98);filter:brightness(.9)}
+.row{display:flex;gap:8px}
+.sbtn{flex:1;border:1px solid var(--line);background:transparent;color:var(--txt);border-radius:12px;padding:11px;font-size:15px;cursor:pointer}
+.sbtn:disabled{opacity:.35}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim);margin:0 0 10px;font-weight:600}
+.hours{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.h{border-radius:10px;padding:8px 0;text-align:center;font-size:13px;background:var(--gray);color:#cfd0d6}
+.h.done{background:var(--g);color:#06230f;font-weight:700}
+.h.now{outline:2px solid #fff;outline-offset:-2px}
+.h.past:not(.done){background:#2a1e1f;color:#a77}
+.extra{font-size:12px;color:var(--dim);margin-top:8px}
+.chain{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.day{aspect-ratio:1;border-radius:6px;background:var(--gray);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(0,0,0,.55);font-weight:600}
+.day.g{background:var(--g)}.day.y{background:var(--y)}.day.r{background:var(--r)}
+.day.today{outline:2px solid #fff;outline-offset:1px}
+.day.pend{background:#2c2d33;color:#aaa}
+.day.none{background:#232429;color:#555}
+.streaks{display:flex;gap:12px;margin-top:14px}
+.streaks div{flex:1;text-align:center;background:#16171a;border-radius:12px;padding:10px}
+.streaks b{display:block;font-size:26px}
+.streaks span{font-size:12px;color:var(--dim)}
+.legend{display:flex;gap:12px;font-size:12px;color:var(--dim);margin-top:10px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top) + 10px);background:#2c2d33;border:1px solid #444;color:#fff;padding:12px 16px;border-radius:14px;font-size:15px;box-shadow:0 8px 30px rgba(0,0,0,.5);display:none;z-index:9;max-width:92%}
+.note{font-size:12px;color:var(--dim);margin-top:8px}
+.toggle{display:flex;justify-content:space-between;align-items:center}
+.toggle button{border:0;border-radius:999px;padding:8px 14px;font-weight:600;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>Hourly Sets</h1><div class="date" id="date"></div></header>
+
+  <div class="card">
+    <div class="top">
+      <div class="ring">
+        <svg width="132" height="132" viewBox="0 0 132 132">
+          <circle cx="66" cy="66" r="56" stroke="#2a2b31" stroke-width="12" fill="none"/>
+          <circle id="arc" cx="66" cy="66" r="56" stroke="#34c759" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="351.86" stroke-dashoffset="351.86" />
+        </svg>
+        <div class="c"><div class="n" id="sets">0</div><div class="d">of 10 sets</div></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span>Incline pushups</span><b id="pu">0 / 50</b></div>
+        <div class="stat"><span>Squats</span><b id="sq">0 / 100</b></div>
+        <div class="stat"><span>Max today</span><b>12 sets</b></div>
+        <div class="status" id="status">Red</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn" id="done">Done a set &nbsp;·&nbsp; 5 incline pushups + 10 squats</button>
+  <div class="tip">Incline on a desk or counter, neutral neck. Chair-height squats with something to hold. Stop if chest, shoulder or neck hurts.</div>
+  <div class="row" style="margin-bottom:12px">
+    <button class="sbtn" id="undo">Undo last</button>
+    <button class="sbtn" id="notif">Enable reminders</button>
+  </div>
+
+  <div class="card">
+    <h2>Today · hourly slots 7 AM – 6 PM</h2>
+    <div class="hours" id="hours"></div>
+    <div class="extra" id="extra"></div>
+  </div>
+
+  <div class="card">
+    <h2>Last 30 days</h2>
+    <div class="chain" id="chain"></div>
+    <div class="legend"><span><i style="background:var(--g)"></i>10+ sets</span><span><i style="background:var(--y)"></i>5–9</span><span><i style="background:var(--r)"></i>&lt;5</span><span><i style="background:#232429"></i>before start</span></div>
+    <div class="streaks">
+      <div><b id="cur">0</b><span>Current streak</span></div>
+      <div><b id="best">0</b><span>Best streak</span></div>
+      <div><b id="greens">0</b><span>Green days (30d)</span></div>
+    </div>
+  </div>
+
+  <div class="note" id="nnote">Reminders fire at the top of each hour, 7 AM – 6 PM, only while this app is open. For reminders when it's closed, use the separate scheduled reminders.</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='hourlysets.v1', GOAL=10, START_H=7, END_H=18; // slots 7..18 => 7 AM .. 6 PM (12 slots)
+let db=JSON.parse(localStorage.getItem(KEY)||'{"days":{},"start":null}');
+const save=()=>localStorage.setItem(KEY,JSON.stringify(db));
+const pad=n=>String(n).padStart(2,'0');
+const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>dkey(new Date());
+if(!db.start){db.start=today();save();}
+const sets=k=>(db.days[k]||[]).length;
+const color=n=>n>=GOAL?'g':n>=5?'y':'r';
+const $=id=>document.getElementById(id);
+
+function toast(msg){const t=$('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',6000);}
+
+$('done').onclick=()=>{const k=today();(db.days[k]=db.days[k]||[]).push(Date.now());save();if(navigator.vibrate)navigator.vibrate(30);
+  const n=sets(k); if(n===GOAL) toast('🟢 10 sets — green day!'); render();};
+$('undo').onclick=()=>{const a=db.days[today()];if(a&&a.length){a.pop();save();render();}};
+
+function streaks(){
+  // walk from start to today; today counts only if already green
+  const s=new Date(db.start+'T00:00:00'), t=new Date(); t.setHours(0,0,0,0);
+  let best=0,run=0,cur=0;
+  for(let d=new Date(s);d<=t;d.setDate(d.getDate()+1)){
+    const k=dkey(d), g=sets(k)>=GOAL;
+    if(g){run++;best=Math.max(best,run);} else if(k!==today()) run=0;
+  }
+  cur=run; return {cur,best};
+}
+
+function render(){
+  const k=today(), n=sets(k), now=new Date();
+  $('date').textContent=now.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+  $('sets').textContent=n;
+  $('pu').textContent=(n*5)+' / 50'; $('sq').textContent=(n*10)+' / 100';
+  const c=color(n), col={g:'#34c759',y:'#ffcc00',r:'#ff453a'}[c];
+  const arc=$('arc'); arc.style.strokeDashoffset=351.86*(1-Math.min(n,GOAL)/GOAL); arc.style.stroke=n?col:'#34c759';
+  const st=$('status'); st.textContent=c==='g'?'Green day':c==='y'?'Yellow so far':'Red so far'; st.style.background=col; st.style.color='#111';
+  $('undo').disabled=!n;
+  // hourly grid: a set logged during hour H fills slot H; extras fill the earliest empty slot
+  const stamps=(db.days[k]||[]).map(x=>new Date(x).getHours());
+  const filled=new Set(); let extra=0;
+  stamps.forEach(h=>{ if(h>=START_H&&h<=END_H&&!filled.has(h)) filled.add(h); else extra++; });
+  let outside=extra;
+  for(let h=START_H;h<=END_H&&extra>0;h++) if(!filled.has(h)){filled.add(h);extra--;}
+  const ch=now.getHours(), H=$('hours'); H.innerHTML='';
+  for(let h=START_H;h<=END_H;h++){const el=document.createElement('div');
+    el.className='h'+(filled.has(h)?' done':'')+(h===ch?' now':'')+(h<ch?' past':'');
+    el.textContent=(h%12||12)+(h<12?'a':'p'); H.appendChild(el);}
+  $('extra').textContent=outside?`${outside} set${outside>1?'s':''} logged outside the hour slot (doubled up or before 7 AM / after 7 PM) — counted and shown in the first open slot${extra?`; ${extra} beyond 12`:''}.`:'';
+  // chain
+  const C=$('chain'); C.innerHTML='';
+  for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const kk=dkey(d), nn=sets(kk);
+    const el=document.createElement('div');
+    el.className='day '+(kk<db.start?'none':(i===0&&nn<GOAL)?'pend':color(nn))+(i===0?' today':'');
+    el.title=kk+': '+nn+' sets'; el.textContent=d.getDate(); C.appendChild(el);}
+  const s=streaks(); $('cur').textContent=s.cur; $('best').textContent=s.best;
+  let g=0; for(let i=0;i<30;i++){const d=new Date();d.setDate(d.getDate()-i);if(sets(dkey(d))>=GOAL)g++;} $('greens').textContent=g;
+  $('notif').textContent=('Notification' in window && Notification.permission==='granted')?'Reminders on ✓':'Enable reminders';
+}
+
+// ---- in-app hourly reminders (only while open) ----
+let lastFired=localStorage.getItem(KEY+'.last')||'';
+async function remind(){
+  const now=new Date(), h=now.getHours(), tag=today()+'-'+h;
+  if(h<START_H||h>END_H||now.getMinutes()>5||lastFired===tag) return;
+  lastFired=tag; localStorage.setItem(KEY+'.last',tag);
+  const n=sets(today()), msg=`Time for a set: 5 incline pushups + 10 squats (${n}/10 today)`;
+  toast('⏰ '+msg); if(navigator.vibrate)navigator.vibrate([200,100,200]);
+  if('Notification' in window && Notification.permission==='granted'){
+    try{const r=await navigator.serviceWorker.ready; r.showNotification('Hourly Sets',{body:msg,tag:'hourly',icon:'icon-192.png'});}
+    catch(e){try{new Notification('Hourly Sets',{body:msg});}catch(_){}}
+  }
+}
+$('notif').onclick=async()=>{
+  if(!('Notification' in window)){toast('Notifications need the app added to your Home Screen (iOS 16.4+). In-app alerts still work while open.');return;}
+  const p=await Notification.requestPermission(); render();
+  toast(p==='granted'?'Reminders on — they fire at the top of each hour while the app is open.':'Notifications blocked; in-app alerts still show while open.');
+};
+setInterval(()=>{remind();if(dkey(new Date())!==$('chain').dataset.k){$('chain').dataset.k=today();render();}},20000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){render();remind();}});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+render(); remind();
+</script>
+</body>
+</html>
